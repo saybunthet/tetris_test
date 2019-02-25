@@ -133,6 +133,17 @@ CMD  Tetris::GetCmd()
 			oldtime = newtime;
 			return CMD_DOWN;
 		}
+		int cmd = rand() % 5;
+		switch (cmd)
+		{
+		case 0:  return CMD_ROTATE;
+		case 1:  return CMD_LEFT;
+		case 2:  return CMD_DOWN;
+		case 3:  return CMD_RIGHT;
+		case 4:  return CMD_SINK;
+		}
+
+		/*
 		if (_kbhit())								// check the command
 		{
 			switch (_getch())
@@ -161,6 +172,7 @@ CMD  Tetris::GetCmd()
 			}
 
 		}
+		*/
 		Sleep(20);
 	}
 }
