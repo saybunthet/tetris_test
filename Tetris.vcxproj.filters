@@ -30,7 +30,7 @@
     <ClInclude Include="Block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="Board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -42,6 +42,9 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="Block.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Board.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>

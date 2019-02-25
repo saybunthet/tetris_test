@@ -1,5 +1,4 @@
-#include "common.h"
-
+#include "Tetris.h"
 void main()
 {
 	Tetris tetris;

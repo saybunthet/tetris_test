@@ -1,10 +1,23 @@
-#include "common.h"
+
+#include <conio.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>  
+#include "Block.h"
+#include "Tetris.h"
+
 
 Block::Block()
-{
+{   		
+	g_blocks[0] = { 0x0F00, 0x4444, 0x0F00, 0x4444, RED };				// I
+	g_blocks[1] = { 0x0660, 0x0660, 0x0660, 0x0660, BLUE };				// O
+	g_blocks[2] = { 0x4460, 0x02E0, 0x0622, 0x0740, MAGENTA };			// L
+	g_blocks[3] = { 0x2260, 0x0E20, 0x0644, 0x0470, YELLOW };			// L oppose
+	g_blocks[4] = { 0x0C60, 0x2640, 0x0C60, 0x2640, CYAN };				// Z
+	g_blocks[5] = { 0x0360, 0x4620, 0x0360, 0x4620, GREEN };			// Z oppose
+	g_blocks[6] = { 0x4E00, 0x4C40, 0x0E40, 0x4640, BROWN };			// T
+
 }
-
-
 Block::~Block()
 {
 }
@@ -141,9 +154,9 @@ void Block::OnSink()
 		}
 		/* calculer le score et le niveaux de difficulté*/
 		score += count * 10;
-		tetris.showScore();
+		showScore();
 		level = score / 100 + 1;					          //le niveau est incrémenté tanque tout les 100 points de score 
-		tetris.showLevel();
+		showLevel();
 	}
 	tetris.NewBlock();												  // créer un nouveau bloc
 }

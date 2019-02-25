@@ -1,6 +1,18 @@
-#include "common.h"
+
+#include <conio.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>  
+#include "Tetris.h"
 
 
+using namespace std;
+
+
+Tetris::Tetris(){
+	oldtime = 0;
+}
+Tetris::~Tetris(){}
 
 void Tetris::start()
 {
@@ -46,7 +58,7 @@ int  Tetris::get_choice()
 }
 void Tetris::play_game()
 {
-	game_board_init();
+	board.game_board_init();
 	/* commencer le jeux*/
 	NewGame();
 	CMD  c;
@@ -80,58 +92,10 @@ void Tetris::WelcomeMenu()
 	SetWorkingImage();
 	putimage(0, 0, &img);
 }
-void Tetris::game_board_init()
-{
-	initgraph(640, 480);
 
-	HWND hwnd = GetHWnd();
-	SetWindowText(hwnd, "Tetris");												// Titre de jeu 
-
-	/* ouvrir la musique du background*/
-	mciSendString("open music\\change.mp3 alia mymusic", NULL, 0, NULL);
-	mciSendString("play music\\change.mp3 repeat", NULL, 0, NULL);
-
-	
-	srand((unsigned)time(NULL));												// pour fabriquer un chiffre random 
-	IMAGE img(640, 480);
-	loadimage(&img, "Pic\\1-110501012153.jpg");
-	SetWorkingImage(&img);
-	showScore();
-	showLevel();
-	
-	/*region pour afficher le guide du jeur*/
-	settextstyle(35, 0, "Calibri");
-	setbkmode(TRANSPARENT);
-	outtextxy(50, 50, "GUIDE");
-	settextstyle(20, 0, "Calibri");
-	outtextxy(55, 135, "up-rotate");
-	outtextxy(55, 155, "left-move left");
-	outtextxy(55, 175, "down-move down");
-	outtextxy(55, 195, "right-move right");
-	outtextxy(55, 215, "space-to the bottom");
-	outtextxy(55, 235, "ESC-quit");
-	settextstyle(22, 0, "Calibri");
-	outtextxy(60, 300, "P-Pause the game");
-
-
-
-	/*définir la région pour jouer*/
-	rectangle((WIDTH + 1)*SIZE - 1, SIZE - 1, (2 * WIDTH + 1)*SIZE, (HEIGHT + 1)*SIZE);
-	rectangle(439, 19, 520, 100);
-	SetWorkingImage();
-	putimage(0, 0, &img);
-
-}
-void Tetris::reset_game_area()
-{
-	
-	setfillcolor(BLACK);
-	bar((WIDTH + 1)*SIZE, SIZE, (2 * WIDTH + 1)*SIZE - 1, (HEIGHT + 1)*SIZE - 1);
-	ZeroMemory(game_area, WIDTH*HEIGHT);
-}
 void Tetris::NewGame()
 {
-	reset_game_area();
+	board.reset_game_area();
 	/* obtenir le bloc prochain */
 	NewBlock();
 }
@@ -144,8 +108,8 @@ void Tetris::GameOver()
 	{
 
 		NewGame();
-		score = 0;
-		showScore();
+		board.setScore(0);
+		board.showScore();
 	}
 	else
 		Quit();
@@ -164,7 +128,7 @@ CMD  Tetris::GetCmd()
 		// le bloc va tomber chaque 0.5s si il y a aucune opération 
 		DWORD newtime = GetTickCount();
 
-		if (newtime - oldtime >= 600 - level * 50)
+		if (newtime - oldtime >= 600 - board.getLevel() * 50)
 		{
 			oldtime = newtime;
 			return CMD_DOWN;
@@ -202,47 +166,44 @@ CMD  Tetris::GetCmd()
 }
 void Tetris::DispatchCmd(CMD _cmd)
 {
-	Block block;
 	switch (_cmd)
 	{
 	case CMD_ROTATE:	block.OnRotate();		break;
-	case CMD_LEFT:		block.OnLeft();		break;
+	case CMD_LEFT:		block.OnLeft();			break;
 	case CMD_RIGHT:		block.OnRight();		break;
-	case CMD_DOWN:		block.OnDown();		break;
-	case CMD_SINK:      block.OnSink();       break;
-	case CMD_STOP:      DisplayPause(); break;
+	case CMD_DOWN:		block.OnDown();			break;
+	case CMD_SINK:      block.OnSink();			break;
+	case CMD_STOP:      DisplayPause();			break;
 	case CMD_QUIT:		break;
 	}
 }
 void Tetris::NewBlock()
 {
-	Block block;
 	/* générer la configuaration de nouveau block*/
-	g_NextBlock.id = rand() % 7;
-	g_NextBlock.dir = rand() % 4;
-	g_NextBlock.x = 11;
-	g_NextBlock.y = 21;
+	block.g_NextBlock.id = rand() % 7;
+	block.g_NextBlock.dir = rand() % 4;
+	block.g_NextBlock.x = 11;
+	block.g_NextBlock.y = 21;
 	/*passer la configuration de nouveau block au block current*/
-	g_CurBlock.id = g_NextBlock.id, g_NextBlock.id = rand() % 7;
-	g_CurBlock.dir = g_NextBlock.dir, g_NextBlock.dir = rand() % 4;
-	g_CurBlock.x = 3;
-	g_CurBlock.y = 24;
-
-	WORD c = g_blocks[g_CurBlock.id].dir[g_CurBlock.dir];
+	block.g_CurBlock.id = block.g_NextBlock.id, block.g_NextBlock.id = rand() % 7;
+	block.g_CurBlock.dir = block.g_NextBlock.dir, block.g_NextBlock.dir = rand() % 4;
+	block.g_CurBlock.x = 3;
+	block.g_CurBlock.y = 24;
+	WORD c = block.g_blocks[block.g_CurBlock.id].dir[block.g_CurBlock.dir];
 
 	while ((c & 0X000F) == 0)
 	{
-		--g_CurBlock.y;
+		--block.g_CurBlock.y;
 		c >>= 4;
 	}
 
 	/* créer un bloc */
-	block.DrawBlock(g_CurBlock,SHOW);
+	block.DrawBlock(block.g_CurBlock,SHOW);
 
 	/* créer le bloc prochain */
 	setfillcolor(BLACK);
 	bar(440, 20, 519, 99);
-	block.DrawBlock(g_NextBlock,SHOW);
+	block.DrawBlock(block.g_NextBlock,SHOW);
 
 	/* les blocs tombent automatiquement */
 	oldtime = GetTickCount();
@@ -262,7 +223,7 @@ void Tetris::writefile(Score_list &S)
 	do
 	{
 		InputBox(S.name, 10, "Votre prénom");					// ajouter le prénom de joueur 
-		S.grades = score;
+		S.grades = board.getScore();
 		fwrite(&S, sizeof(S), 1, fp);
 
 
@@ -363,39 +324,9 @@ void Tetris::top_score()
 		}if (flag != 0) break;
 	}
 }
-void Tetris::showScore() {
-	char str[10];
-	setfillcolor(BLACK);
-	rectangle(449, 299, 576, 326);
-	bar(450, 300, 575, 325);
-	setcolor(WHITE);
-	settextstyle(25, 0, "Calibri");
-	sprintf_s(str, sizeof(str), "score:%d", score);
-	outtextxy(450, 300, str);
-}
-void Tetris::showLevel()
-{
-	char str[10];
-
-	setfillcolor(BLACK);
-
-	rectangle(449, 249, 576, 276);
-
-	bar(450, 250, 575, 275);
-
-	setcolor(WHITE);
-
-	settextstyle(25, 0, "Calibri");
-
-	sprintf_s(str, sizeof(str), "Level:%d", level);
-
-	outtextxy(450, 250, str);
-
-}
 void Tetris::DisplayPause()
 {
-	while (_getch() != 'p'&&_getch() != 'P')
-		;
+	while (_getch() != 'p'&&_getch() != 'P');
 }
 
 

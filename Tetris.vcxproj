@@ -121,13 +121,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Tetris.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="CMD.h" />
-    <ClInclude Include="common.h" />
     <ClInclude Include="DRAW.h" />
     <ClInclude Include="Score_list.h" />
     <ClInclude Include="Tetris.h" />
